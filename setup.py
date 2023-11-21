@@ -5,7 +5,7 @@ with open("requirements.txt", 'r') as f:
 
 setup(name='rvc',
       version='0.1.0',
-      description='Installable package of Mangio RVC fork',
+      description='Installable package of Mangio RVC fork modified for external usage',
       author='Cole Mangio',
       packages=find_packages(),
       install_requires=requirements,
