@@ -82,7 +82,7 @@ multidict==6.0.4
 networkx==2.8.8
 noisereduce==2.0.1
 numba==0.58.1
-numpy==1.26.2
+numpy==1.24.3
 oauthlib==3.2.2
 omegaconf==2.0.6
 onnx==1.14.0
