@@ -1,0 +1,1 @@
+recursive-include lib/uvr5_pack/lib_v5/modelparams *.json
