@@ -91,22 +91,22 @@ class Config:
 
         return x_pad, x_query, x_center, x_max
 
-
-f0up_key = sys.argv[1]
-input_path = sys.argv[2]
-index_path = sys.argv[3]
-f0method = sys.argv[4]  # harvest or pm
-opt_path = sys.argv[5]
-model_path = sys.argv[6]
-index_rate = float(sys.argv[7])
-device = sys.argv[8]
-is_half = sys.argv[9].lower() != "false"
-filter_radius = int(sys.argv[10])
-resample_sr = int(sys.argv[11])
-rms_mix_rate = float(sys.argv[12])
-protect = float(sys.argv[13])
-print(sys.argv)
-config = Config(device, is_half)
+if __name__ == "__main__":
+    f0up_key = sys.argv[1]
+    input_path = sys.argv[2]
+    index_path = sys.argv[3]
+    f0method = sys.argv[4]  # harvest or pm
+    opt_path = sys.argv[5]
+    model_path = sys.argv[6]
+    index_rate = float(sys.argv[7])
+    device = sys.argv[8]
+    is_half = sys.argv[9].lower() != "false"
+    filter_radius = int(sys.argv[10])
+    resample_sr = int(sys.argv[11])
+    rms_mix_rate = float(sys.argv[12])
+    protect = float(sys.argv[13])
+    print(sys.argv)
+    config = Config(device, is_half)
 now_dir = os.getcwd()
 sys.path.append(now_dir)
 from vc_infer_pipeline import VC
@@ -138,7 +138,7 @@ def load_hubert():
     hubert_model.eval()
 
 
-def vc_single(sid, input_audio, f0_up_key, f0_file, f0_method, file_index, index_rate):
+def vc_single(sid, input_audio, f0_up_key, f0_file, f0_method, file_index, index_rate, crepe_hop_length):
     global tgt_sr, net_g, vc, hubert_model, version
     if input_audio is None:
         return "You need to upload an audio", None
@@ -168,6 +168,7 @@ def vc_single(sid, input_audio, f0_up_key, f0_file, f0_method, file_index, index
         version,
         protect,
         f0_file=f0_file,
+        crepe_hop_length = crepe_hop_length
     )
     print(times)
     return audio_opt
@@ -202,14 +203,21 @@ def get_vc(model_path):
     n_spk = cpt["config"][-3]
     # return {"visible": True,"maximum": n_spk, "__type__": "update"}
 
-
-get_vc(model_path)
-audios = os.listdir(input_path)
-for file in tq.tqdm(audios):
-    if file.endswith(".wav"):
-        file_path = input_path + "/" + file
-        wav_opt = vc_single(
-            0, file_path, f0up_key, None, f0method, index_path, index_rate
-        )
-        out_path = opt_path + "/" + file
-        wavfile.write(out_path, tgt_sr, wav_opt)
+def set_params_temp(
+        _device,
+        _is_half,
+        _filter_radius,
+        _resample_sr,
+        _rms_mix_rate,
+        _protect,
+    ):
+        global device, is_half, filter_radius, resample_sr, rms_mix_rate, protect, config
+        device = _device
+        is_half = _is_half
+        filter_radius = _filter_radius
+        resample_sr = _resample_sr
+        rms_mix_rate = _rms_mix_rate
+        protect = _protect
+        #
+        global config
+        config = Config(device, is_half)
